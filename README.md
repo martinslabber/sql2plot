@@ -14,10 +14,10 @@ Python3 [ConfigParser][1] (in ExtendedInterpolation mode) allows for flexible co
 ## Dependencies
 
 Python3 with the following modules are necessary:
-pandas
-sqlalchemy
-matplotlib
-seaborn
+- pandas
+- sqlalchemy
+- matplotlib
+- seaborn
 
 ## Usage
 
@@ -29,8 +29,8 @@ If you pass in an *.ini* file named 'init.ini', it will be ignored.
 
 ## Configuration
 
-in the *.ini* file a *[plot]* section is required.
-The *[plot]* section can have the following keys.
+in the *.ini* file a **[plot]** section is required.
+The **[plot]** section can have the following keys.
 - dsn - Database connection string
 - plot type - The type of plot. This can be "line" or "cat"
 - title - Title of the plot
@@ -41,6 +41,9 @@ The *[plot]* section can have the following keys.
 All sections with a name that starts with *sql-* needs a query key.
 The value of the query key should be an SQL statement that returns columns name,x, and y. Multi-line queries are supported, indent from the second line.
 The *sql-* sections can also have a marker key; the value of the marker key should be a Matplotlib marker [character][6].
+
+If you have an *init.ini* file in the same directory as your *.ini* files, this file will be loaded before each of the *.ini* file.
+It is typical to have a **[DEFAULT]** section in the *init.ini* file, this will allow you to not repeat yourself if you have many nearly similar plots.
 
 [1]:https://docs.python.org/3/library/configparser.html#module-configparser "ConfigParser"
 [2]:https://pandas.pydata.org/ "Pandas"
