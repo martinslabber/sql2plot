@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+import logging
 
 from pathlib import Path
 from configparser import ConfigParser, ExtendedInterpolation
@@ -39,6 +40,10 @@ class PConf:
             yield self.configfile.with_suffix("." + filetype)
 
 
+def dist_plot(sql, df):
+    plot = sns.distplot(df, rug=True)
+    return plot
+
 def cat_plot(sql, df):
     plot = sns.catplot(data=df, x="x", y="y", hue="name", kind="bar", palette="muted")
     return plot
@@ -51,17 +56,34 @@ def line_plot(sql, df):
     return plot
 
 
+def lineregion_plot(sql, df):
+    plot = sns.lineplot(data=df, dashes=False, hue="name", x='x', y='y')
+
+    return plot
+
+
 def mk_plot(config_filename):
     conf = PConf(config_filename)
     engine = create_engine(conf.dsn)
     sns.set_style("whitegrid")
+    plot = None
 
     for sql in conf.sql:
         df = pd.read_sql_query(sql["query"], engine)
         if conf.plot_type == "line":
             plot = line_plot(sql, df)
+        elif conf.plot_type == "lineregion":
+            plot = lineregion_plot(sql, df)
         elif conf.plot_type == "cat":
             plot = cat_plot(sql, df)
+        elif conf.plot_type in ["histogram", "distribution", "distplot"]:
+            plot = dist_plot(sql, df)
+        else:
+            logging.warning("No plot type defined, making a line plot")
+            plot = line_plot(sql, df)
+    if plot is None:
+        logging.error("Nothing to plot.")
+        raise ValueError("nothing to plot")
 
     plot.set(title=conf.title, xlabel=conf.x, ylabel=conf.y)
     for outfile in conf.output_filenames():
