@@ -70,6 +70,8 @@ def mk_plot(config_filename):
 
     for sql in conf.sql:
         df = pd.read_sql_query(sql["query"], engine)
+        if df.empty:
+            continue
         if conf.plot_type == "line":
             plot = line_plot(sql, df)
         elif conf.plot_type == "lineregion":
